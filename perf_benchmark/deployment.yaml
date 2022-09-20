@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grpc-httpjson-transcoding-benchmark
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grpc-httpjson-transcoding-benchmark
+  template:
+    metadata:
+      labels:
+        app: grpc-httpjson-transcoding-benchmark
+    spec:
+      nodeSelector:
+        node.kubernetes.io/instance-type: n1-highmem-32
+      containers:
+      - name: grpc-httpjson-transcoding-benchmark-app
+        image: gcr.io/cloudesf-testing/grpc-httpjson-transcoding-benchmark:latest
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: 512Mi
+            cpu: 500m
+          limits:
+            memory: 2Gi
+            cpu: 2
+        command: ["./benchmark_main"]
+        args: [
+          "--benchmark_repetitions=1000",
+          "--benchmark_counters_tabular=true",
+          "--benchmark_min_warmup_time=3"
+        ]
